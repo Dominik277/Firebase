@@ -114,10 +114,20 @@ public class LoginActivity extends AppCompatActivity {
                     password.setError("Please enter your password");
                     password.requestFocus();
                 }
+
+                //sljedeci dio koda unutar else if bloka se obavlja kada je naredba unutar zagrada tocna, a naredba unutar
+                //zagrada je istinita onoga trenutka kada je korisnik kliknuo gumb za Login, a polja za email i lozinku
+                //su mu ostala prazna
                 else if (email.isEmpty() && pwd.isEmpty()){
+
+                    //u slucaju kada su obadva polja i za email i za lozinku prazna onda se pojavljuje Toast poruka na dnu
+                    //ekrana s tekstom "Fields Are Empty"
                     Toast.makeText(LoginActivity.this,
                             "Fields Are Empty",Toast.LENGTH_LONG).show();
                 }
+
+                //sljedeci dio koda se obavlja u slucaju kada je situacija tocno onakava kakvu zelimo, odnosno kada je korisnik
+                //kliknuo gumb za login nakon sto je popunio polje za email i za lozinku
                 else if (!(email.isEmpty() && pwd.isEmpty())){
                     mFirebaseAuth.signInWithEmailAndPassword(email,pwd)
                             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
@@ -134,6 +144,10 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             });
                 }
+
+                //pokrili smo vise slucajeva koji se mogu desiti prilikom logiranja korisnika u sustav, ako se dogodi neka
+                //pogreska koju nismo predvidili da bi se mogla desiti onda ce se na dnu ekrana pojaviti Toast poruka s
+                //porukom "Error Ocurred"
                 else {
                     Toast.makeText(LoginActivity.this,
                             "Error Ocurred!",
@@ -143,7 +157,19 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        //u ovom activity-u kao sto smo rekli imamo gumb kojem smo pomocu metode setOnClickListener() dali nekakvu funkcionalnost
+        //jos nismo naveli sto tocno nego smo samo naveli da ce imati neku funkciju u trenutku kada se na njega klikne
         tvSignUp.setOnClickListener(new View.OnClickListener() {
+
+            //ovdje smo naveli sto ce se desiti prilikom klika na gumb, a to je da cemo s pomocu Intent klase, odnosno objekta
+            //Intent klase prilikom klika na gumb otvoriti novi activity, a novi activity koji ce se otvoriti je MainActivity
+            //kao parametre Intent konstruktoru navodimo klasu unutar koje se nalazi gumb koji smo kliknuli, a kao drugi parametar
+            //navodimo klasu koju zelimo da se otvori prilikom klika na gumb
+            //startActivity() --> u liniji iznad ove metode smo definirali sta se treba desiti prilikom klika na gumb te smo to sve
+            //                    pohranili unutar intSignUp objekta koji u sebi ima sve informacije potrebne za otvaranje nove klase
+            //                    ali jos to nismo upogonili i upravo cemo to upogoniti s pomocu metode startActivity() kojoj kao
+            //                    argument predajemo objekt Intent klase koji u sebi sadrzi sve potrebne podatke za otvaranje novog
+            //                    activity-a
             @Override
             public void onClick(View v) {
                 Intent intSignUp = new Intent(LoginActivity.this,MainActivity.class);
