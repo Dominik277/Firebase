@@ -8,7 +8,16 @@ sustav.
 --------------
 MainActivity
 --------------
-
+Ova klasa nam sluzi kada zelimo se samo ulogirati u sustav, kada vec imamo registriran racun.Ova klasa zapocinje
+klasicnim dijelom da deklariramo sve View-ove koju pripadaju ovom activity-u a to su dva EditText-a jedan gumb i jedan
+TextView, osim toga smo također instancirali i objekt klase FirebaseAuth koja je pocetni dio svake aplikacije koja koristi
+Firebase sustav za unosenje korisnika te u sebi sadrzi brojne metode koja olaksavaju posao unosenja korisnika.Nakon toga
+deklariramo sta ce se desiti prilikom klika na gumb te unutar te deklaracije spremamo onaj tekst koji je korisnik unio u
+dva EditTexta unutar dvije String varijable te vrsimo provjeru nad njima.Provjeravmo slucajno ako korisnik nije unio email,
+lozinku ili mozda oboje te ga obavijestavamo s pomocu metode setError() koja na desnoj strani EditText-a stavlja mali crveni
+uslikcnik te nas u popup poruci obavijestava sta smo krivo napravili.Također imamo i slucaj kada je korisnik unio sve na
+pravilan nacin te se nakon toga poziva metoda creteUserWithEmailAndPassword() koja ima za zadatak kreirati korisnika unutar
+Firebase sustava
 
 
 --------------
