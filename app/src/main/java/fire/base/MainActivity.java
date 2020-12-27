@@ -101,16 +101,55 @@ public class MainActivity extends AppCompatActivity {
                 //sljedeci dio koda se obavlja u slucaju kada je situacija tocno onakava kakvu zelimo, odnosno kada je korisnik
                 //kliknuo gumb za login nakon sto je popunio polje za email i za lozinku
                 else if (!(email.isEmpty() && pwd.isEmpty())){
+
+                    //kao sto sam negdje vec i naveo FirebaseAuth je klasa koja je polazna tocka Authentication sistema unutar
+                    //Firebase-a i ona u sebi sadrzi razne metode koje su nam potrebne kako bi vrsili raznorazne operacije koje
+                    //su potrebne kako bi se korisnik ulogirao u sustav ili odjavio iz sustava.Mi smo iznad u kodu stvorili objekt
+                    //te FirebaseAuth klase s pomocu metode getInstance() i taj objekt nazvali mFirebaseAuth i sada imamo mogucnost
+                    //pozivanja raznih metoda iz te klase.
+                    //createUserWithEmailAndPassword() --> nalazimo se u bloku koda koji se izvrsava kada je korisnik na pravilan nacin
+                    //                                     popunio i polje za email i za lozinku te kliknuo gumb, zatim kada se to sve
+                    //                                     odvilo onda se poziva ova metoda koja u Firebase sustavu kreira novog korisnika
+                    //                                     a kao argumente toj metodi predajemo email koji je korisnik unio i lozinku koju
+                    //                                     je korisnik unio
                     mFirebaseAuth.createUserWithEmailAndPassword(email,pwd)
+
+                            //kada se izvodi neki zadataka(Task) u nasem slucaju kada se korisnik unosi u sustav moze doci do pogreske, a moze
+                            //doci i do pravilnog izvrsava zadatka, postoje dvije razlicite metode, jedna se poziva kada je doslo do pogreske
+                            //prilikom unosenja korisnika u sustav i zove se onFailureListener() te unutar njenog tijela navodimo sta ce se odvijati
+                            //nakon sto je doslo do te pogreske, a također imamo i metodu koja se poziva kada je sve proslo u najboljem redu i zove se
+                            //onSuccessListener te unutar njenog tijela navodimo sve sto ce se desavati kada je korisnik pravilo unesen u sustav
+                            //i onda dolazimo do metode koju smo mi naveli, a to je onCompleteListener a tu metodu mozemo zamisliti kao da u sebi
+                            //ima ujedinjene metode onFailureListener() i onSuccessListener(), znaci unutar tijela ove metode navodimo sta ce se
+                            //desiti prilikom pravilnog izvrsavanja i nepravilnog izvrsanja unosenja korisnika u sustav, mi smo to navelu s pomocu
+                            //if i else blokova gdje nam if blok predstavlja onFailureListener() metodu, a else blok onSuccessListener() metodu
                             .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+
+                                //kao sto sam gore i naveo tu se odvijaju radnje i ako je zadatak(Task) pravilno izveden ili nepravilno
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
+
+                                    //u ovom if bloku task nam predstavlja zadatak koji obavljamo u nasem slucaju je to unosenje korisnika u sustav
+                                    //i ovdje provjeravamo unutar zagrade je li zadatak ispravno obavljen, ali ispred nam je znak ! sto znaci negacija
+                                    //te taj dio u zagradi mozemo prevesti na nacin da ce se dio koda unutar if bloka izvrsavati samo ako zadatak nije
+                                    //pravilno obavljen, odnosno mozemo to zamisliti kao onFailureListener() metodu
                                     if (!task.isSuccessful()){
+
+                                        //u slucaju kada je unosenje korisnika u sustav donijelo nekakav error onda nam se na dnu ekrana ispisuje poruka
+                                        //"SignUp Unsuccessful, Try Again!", kao prvi parametar moramo navesti klasu unutar koje zelimo da nam se ta
+                                        //poruka prikaze, to nam je zapravo Context
                                        Toast.makeText(MainActivity.this,
                                                "SignUp Unsuccessful,Try Again!",
                                                Toast.LENGTH_LONG)
                                                .show();
                                     }
+
+                                    //ovaj dio koda unutar else bloka se odvija kada je korisnik napravio sve na pravilan nacin te je nakon toga kliknuo
+                                    //gumb, ovaj else dio mozemo zamisliti kao da nam je to metoda onSuccessListener(), znaci u slucaju kada korisnik
+                                    //na pravilan nacin unese svoje podatke onda se prilikom klika na gumb poziva metoda startActivity() koja unutar
+                                    //sebe kreira novi objekt klase Intent samo sto nismo definirali ime preko kojeg cemo referencirati taj objekt nego
+                                    //smo ga samo kreirali, te smo pomocu tog objekta rekli da prilikom klika na gumb zelimo otvoriti novi activity i to
+                                    //HomeActivity
                                     else{
                                         startActivity(new Intent(MainActivity.this,
                                                 HomeActivity.class));
