@@ -27,6 +27,9 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseAuth mFirebaseAuth;
 
 
+    //kao sto smo vec ranije rekli FirebaseAuth abstraktna klasa je pocetna tocka u Firebase sustavu za unosenje korisnika
+    //u sustav, a na tu abstraktnu klasu smo jos dodali i AuthStateListener interfejs koji se poziva kada god se dogodi
+    //neka promjena u authentication sustavu te smo taj objekt te abstrktne klase i interfejsa nazvali mAuthStateListener
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     @Override
@@ -48,10 +51,31 @@ public class LoginActivity extends AppCompatActivity {
         btnSignIn = findViewById(R.id.button2);
         tvSignUp = findViewById(R.id.textView);
 
+        //vec smo ranije rekli da ovaj objekt je kreiran od interfejsa cija se metoda poziva onda kada
+        //se dogodi nekakava promjena unutar authentication sustavu i to smo upravo definirali ovdje
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+
+            //ovdje smo pozvali metodu onAuthStateChanged() koja se poziva onda kada zelimo prikazati promjene
+            //u UI thread-u koje su se desile nakon sto se korisnik unio u sustav, imamo if blok i else blok
+            //unutar koje smo izveli razlicite radnje ovisno o operacijama u zagradama
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+                //u ovoj liniji koda smo napravili objekt klase FirebaseUser koji nam predstavlja profil određenog
+                //korisnika koji je trenutno unesen te sve njegove podatke, to smo spremili u objekt s pomocu operacije
+                //koje su se odvijale s desne strane, a tu operaciju s desne strane mozemo zamisliti tako da je pozvan
+                //objekt mFirebaseAuth koji ima za zadatak prepoznati da se novi korisnik unosi u sustav te s pomocu
+                //metode getCurrentUser() ona u sebe pohranjuje posljednjeg korisnika koji je unesen u sustav, te sada
+                //unutar mFirebaseUser objekta je sadrzan taj zadnji korisnik sa svim informacijama vezanih za njega
                 FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+                //u zagradi unutar if naredbe imamo operaciju koju mozemo zamisliti na sljedeci nacin, ako je korisnik
+                //koji se razmatra razlicit od null, odnosno ako postoji ispisat ce nam se Toast na dnu ekrana s porukom
+                //"You are logged in" te ce se kreirati objekt klase Intent koji ce nam otvoriti novi activity, a kako bi
+                //znao koji activity mora otvoriti njegovom konstruktoru kao prvi argument prilazemo klasu unutar koje se
+                //sada nalazi, a kao drugi argument mu prilazimo koju klasu iducu treba otvoriti, i sve to upogonjujemo
+                //s pomocu metode startActivity() kojoj kao argument predajemo objekt klase Intent koji u sebi sadrzi sve
+                //podatke potrebne za otvaranje nove aktivnosti
                 if(mFirebaseUser != null){
                     Toast.makeText(LoginActivity.this,
                             "You are logged in",
@@ -60,6 +84,9 @@ public class LoginActivity extends AppCompatActivity {
                     Intent i = new Intent(LoginActivity.this,HomeActivity.class);
                     startActivity(i);
                 }
+
+                //else blok koda se odvija u slucaju kada ne postoji niti jedan korisnik te se ispisuje Toast poruka na dnu
+                //ekrana s tekstom "Please Login"
                 else {
                     Toast.makeText(LoginActivity.this,
                             "Please Login",
@@ -129,14 +156,40 @@ public class LoginActivity extends AppCompatActivity {
                 //sljedeci dio koda se obavlja u slucaju kada je situacija tocno onakava kakvu zelimo, odnosno kada je korisnik
                 //kliknuo gumb za login nakon sto je popunio polje za email i za lozinku
                 else if (!(email.isEmpty() && pwd.isEmpty())){
+
+                    //kao sto smo i rekli FirebaseAuth klasa je polazna tocka svake operacije koju zelimo da se odvija vezana
+                    //za unosenje korisnika u sustav, mi smo od te klase s pomocu metode getInstance() kreirali objekt te rekli
+                    //da cemo ga referencirati s pomocu imena mFirebaseAuth te sada s pomocu tog objekta mozemo dohvatiti razne
+                    //metode koje se nalaze u toj klasi.
+                    //Posto se nalazimo u login activity-u ovaj dio se koristi kako bi se korisnik ulogirao u sustav te se poziva
+                    //metoda signInWithEmailAndPassword() koja nam omogucuje da se korisnik ulogira u sustav, kao argumente ovoj
+                    //metodi unosimo email i lozinku koje je korisnik upisao
                     mFirebaseAuth.signInWithEmailAndPassword(email,pwd)
+
+                            //ovo je dodatna mogucnost koju nadodajemo na ovaj objekt a to je da se definira sto ce se desiti ako
+                            //je korisnik na pravilan nacin unio podatke i ako je korisnik na nepravilan nacin unio podatke
+                            //postoji metoda onFailureListener() koja se poziva kada je nesto poslo po krivu prilikom unosenja
+                            //korisnika u sustav, a postoji i metode onSuccessListener() koja se poziva kada je korisnik unesen na
+                            //pravilan nacin, a postoji i metoda onCompleteListener() koja pokriva mogucnosti za obje klase, u nasem
+                            //slucaju mozemo to zamislit da smo onFailureListener() metodu implementirali unutar if() bloka, a
+                            //onSuccessListener() metodu smo implementirali unutar else bloka
                             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+
+                                //ovu metodu mozemo prevesti tako da se ovaj dio koda odvija ako zadatak(Task) nije pravilno izveden
+                                //u tom slucaju ce se na dnu ekrana prikazati Toast s porukom "Login Error, Try Again!"
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (!task.isSuccessful()){
                                         Toast.makeText(LoginActivity.this,
                                                 "Login Error, Try Again!",Toast.LENGTH_LONG).show();
                                     }
+
+                                    //ovaj dio koda mozemo zamisliti kao onSuccessListener() metodu te se on odvija u slucaju da je
+                                    //sve proslo onako kako treba prilikom unosenja korisnika u sustav
+                                    //u slucaju pravilnog unosenja korisnika u sustav cemo otvoriti novi activity i to HomeActivity
+                                    //s pomocu objekta intToHome klase Intent koji smo inicijalizirali tako da smo mu kao argumente
+                                    //konstruktoru predali klasu unutar koje se trenutno nalazi i klasu koju treba otvoriti kada se
+                                    //korisnik pravilno unese u sustav
                                     else {
                                         Intent intToHome = new Intent(LoginActivity.this,HomeActivity.class);
                                         startActivity(intToHome);
